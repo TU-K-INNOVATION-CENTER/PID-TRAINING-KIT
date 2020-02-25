@@ -1,8 +1,8 @@
 #ifndef _TURBIDITY_
 #define _TURBIDITY_
 
-#define <Arduino.h>
-#define <EEPROM.h>
+#include <Arduino.h>
+#include <EEPROM.h>
 
 namespace tuk_lab{
 

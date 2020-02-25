@@ -1,6 +1,7 @@
 #include "turbidity.h"
 
 namespace tuk_lab{
+
     Turbidity::Turbidity(int sensor_pin): sensor_pin(sensor_pin){
 
     }
@@ -8,9 +9,8 @@ namespace tuk_lab{
     void Turbidity::initialize(){
          //retreive last calibration value from EEPROM Address 500
         EEPROM.get(500, Vclear); 
-        //set calibration button pin to INPUT PULL UP
-        pinMode(this->sensor_pin, INPUT);
-        digitalWrite(this->sensor_pin),HIGH);
+       
+        
     }
 
     void Turbidity::calibrate(){
@@ -43,6 +43,8 @@ namespace tuk_lab{
         Serial.print("TURBIDITY VALUE =>  ");
         Serial.print(this->turbidity);
         Serial.println(" %");
+
+        this->sensor = 0;
 
         return this->turbidity;
      }
