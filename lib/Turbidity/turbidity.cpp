@@ -18,7 +18,7 @@ namespace tuk_lab{
 
 
         for (int i = 0; i < number_of_samples; i++) {
-            this->sensor += analogRead(A1); // read the input on analog pin 1:
+            this->sensor += analogRead(sensor_pin); // read the input on analog sensor pin
             delay(10);
         }
         this->sensorValue = this->sensor / this->number_of_samples;
@@ -30,7 +30,7 @@ namespace tuk_lab{
 
      float Turbidity::get_value(){
          for (int i = 0; i < number_of_samples; i++) {
-            sensor += analogRead(A1); // read the input on analog pin 1 (turbidity sensor analog output)
+            sensor += analogRead(sensor_pin); // read the input on analog sensor pin  (turbidity sensor analog output)
             delay(10);
         }
         this->sensorValue = this->sensor / this->number_of_samples;    // average the n values
@@ -40,9 +40,6 @@ namespace tuk_lab{
 
         EEPROM.put(500, this->Vclear); // guarda el voltaje de calibración actualmente en uso.
 
-        Serial.print("TURBIDITY VALUE =>  ");
-        Serial.print(this->turbidity);
-        Serial.println(" %");
 
         this->sensor = 0;
 
