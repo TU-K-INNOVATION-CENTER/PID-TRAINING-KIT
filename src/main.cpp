@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 #include "turbidity.h"
-#include "DFRobot_PH.h"
+#include "ph_sensor.h"
 
 #define turbidity_sensor_pin A0
 #define ph_sensor_pin A2
@@ -10,17 +10,15 @@
 
 
 tuk_lab::Turbidity turbidity_sensor(turbidity_sensor_pin);
-DFRobot_PH ph;
+tuk_lab::Ph_sensor ph_sensor(ph_sensor_pin);
 
-float voltage1;
-float phValue;
 const float temperature = 25;
 
 void setup() {
   //start serial port at baudrate 9600bits/sec
   Serial.begin(9600);
-  ph.begin();
   turbidity_sensor.initialize();
+  ph_sensor.initialize();
 
   pinMode(calibration_button_pin, INPUT);
   digitalWrite(calibration_button_pin,HIGH);
@@ -30,19 +28,24 @@ void setup() {
 
 void loop() {
     
-    static unsigned long timepoint = millis();
-    if (millis() - timepoint > 1000U) //time interval: 1s
-    {
-      timepoint = millis();
-       voltage1 = analogRead(ph_sensor_pin) / 1024.0 * 5000; // read the voltage
-      
-       phValue = ph.readPH(voltage1, temperature); // convert voltage to pH with temperature compensation
-      Serial.print("temperature:");
-      Serial.print(temperature, 1);
-      Serial.print("^C  pH:");
-      Serial.println(phValue, 2);
+    int calibration_button_status = digitalRead(calibration_button_pin);
+    float turbidity_value;
+
+    if(calibration_button_status == HIGH){ 
+       turbidity_value = turbidity_sensor.get_value();
     }
-    ph.calibration(voltage1, temperature); // calibration process by Serail CMD
+
+    else if(calibration_button_status == LOW){
+        turbidity_sensor.calibrate();
+    }
+    
+    
+    ph_sensor.get_value(temperature);
+    Serial.print("Ph Value : ");
+    Serial.print(ph_sensor.ph_value,2);
+    Serial.print("   Turbidity : ");
+    Serial.println(turbidity_value);
+   
 
  
 
