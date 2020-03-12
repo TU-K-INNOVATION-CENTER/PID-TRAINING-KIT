@@ -8,8 +8,8 @@
 #define ph_sensor_pin A2
 #define calibration_button_pin 2
 
-#define acid_pump 5;
-#define base_pump 6;
+#define acid_pump 5
+#define base_pump 6
 
 
 tuk_lab::Turbidity turbidity_sensor(turbidity_sensor_pin);
@@ -18,18 +18,18 @@ tuk_lab::Ph_sensor ph_sensor(ph_sensor_pin);
 const float temperature = 25;
 
 //--------PID variables--------------------------------------
-double Kp = 5;
-double Ki = 10;
-double Kd = 20;
+double Kp =100;
+double Ki = 60;
+double Kd = 150;
 
-double sample_period = 200;
+double sample_period =10;
 unsigned long last_time;
 double total_error = 0;
 double last_error = 0;
 bool error_type = true; //false is negative error true is positive error
 double control_signal;
 double actual_ph_value = 0;
-double desired_ph_value = 16;
+double desired_ph_value = 5.0;
 double error;
 //---------------------------------------------------------------------------
 
@@ -70,6 +70,8 @@ void setup() {
   ph_sensor.initialize();
 
   pinMode(calibration_button_pin, INPUT);
+  pinMode(acid_pump,OUTPUT);
+  pinMode(base_pump,OUTPUT);
   digitalWrite(calibration_button_pin,HIGH);
   
 
@@ -90,10 +92,10 @@ void loop() {
     
     
     ph_sensor.get_value(temperature);
-    Serial.print("Ph Value : ");
-    Serial.print(ph_sensor.ph_value,2);
-    Serial.print("   Turbidity : ");
-    Serial.println(turbidity_value);
+    //Serial.print("Ph Value : ");
+    //Serial.print(ph_sensor.ph_value,2);
+   // Serial.print("   Turbidity : ");
+   // Serial.println(turbidity_value);
 
     actual_ph_value = ph_sensor.ph_value;
    
@@ -103,6 +105,16 @@ void loop() {
       Serial.print(control_signal);
       Serial.print(",");
       Serial.println(actual_ph_value);
+
+    
+    if(error_type == true){ //positive error
+      analogWrite(base_pump,(control_signal));
+       analogWrite(acid_pump,0);
+    }
+    if(error_type == false){ //negative error
+      analogWrite(acid_pump,(control_signal));
+      analogWrite(base_pump,(0));
+    }
  
 
 
